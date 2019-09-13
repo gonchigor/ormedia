@@ -28,4 +28,5 @@ my_dict = {
 
 print(my_dict)
 print(my_dict['ДДТ'])
+print(my_dict.get('Queen'))
 # print(__doc__)
