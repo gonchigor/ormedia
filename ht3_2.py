@@ -3,10 +3,11 @@
 и в сумме получить третье;
 '''
 def sum_equal(*args):
+    # TODO: work with 3 numbers. Fix it for n numbers
     for i in range(0, len(args) - 1):
         for j in range(i + 1, len(args)):
             s = args[i] + args[j]
-            if s in args and s != args[i] and args[j] != s:
+            if args.count(s):
                 return 'yes'
     return 'ERROR'
 
