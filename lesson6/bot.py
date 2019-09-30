@@ -2,6 +2,7 @@ import requests
 import json
 from time import sleep
 from token_auth import token
+from currates import rate
 
 last_updates = 0
 URL = 'https://api.telegram.org/bot' + token + '/'
@@ -42,6 +43,8 @@ def main():
             chat_id = answer['chat_id']
             if 'ничего' in answer['text']:
                 send_message(chat_id, 'Тогда проваливай')
+            elif answer['text'] in ('/USD', '/EUR', '/RUB'):
+                send_message(chat_id, rate(answer['text'][1:])[2])
             else:
                 send_message(chat_id, 'Что тебе нужно?')
         sleep(3)
