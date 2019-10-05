@@ -44,7 +44,10 @@ def main():
             if 'ничего' in answer['text']:
                 send_message(chat_id, 'Тогда проваливай')
             elif answer['text'] in ('/USD', '/EUR', '/RUB'):
-                send_message(chat_id, rate(answer['text'][1:])[2])
+                try:
+                    send_message(chat_id, rate(answer['text'][1:])[2])
+                except Exception:
+                    print("Error")
             else:
                 send_message(chat_id, 'Что тебе нужно?')
         sleep(3)
