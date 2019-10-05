@@ -4,6 +4,7 @@ from time import sleep
 from token_auth import token
 from currates import rate
 from datetime import date
+from habr import get_habr
 
 last_updates = 0
 URL = 'https://api.telegram.org/bot' + token + '/'
@@ -54,30 +55,41 @@ def main():
                 answer_text_words = answer_text.split()
                 if 'ничего' in answer['text']:
                     send_message(chat_id, 'Тогда проваливай')
-                elif len(answer_text_words) and \
-                    answer_text_words[0].upper() in ('/USD', '/EUR', '/RUB'):
-                    try:
+                elif len(answer_text_words):
+                    if answer_text_words[0].upper() in ('/USD', '/EUR', '/RUB'):
+                        try:
+                            if len(answer_text_words) == 1:
+                                send_message(chat_id,
+                                             'Курс {} {} на сегодня: {}'.format(
+                                                *rate(answer_text_words[0][1:])))
+                            else:
+                                date_value = date(int(answer_text_words[3]),
+                                                  int(answer_text_words[2]),
+                                                  int(answer_text_words[1]))
+                                send_message(chat_id,
+                                             'Курс {1} {2} на {0}: {3}'.format(
+                                                date_value.isoformat(),
+                                                *rate(answer_text_words[0][1:],
+                                                      date_value)
+                                             ))
+                        except (KeyError, ValueError):
+                            send_message(chat_id, 'Something wrong!!!')
+                        except Exception as e:
+                            print(type(e))
+                            send_message(chat_id, "Incorrect command")
+                    elif answer_text_words[0].upper() == '/HABR':
                         if len(answer_text_words) == 1:
-                            send_message(chat_id,
-                                         'Курс {} {} на сегодня: {}'.format(
-                                            *rate(answer_text_words[0][1:])))
+                                messages = get_habr()
+                                for mes in messages:
+                                    send_message(chat_id, mes)
                         else:
-                            date_value = date(int(answer_text_words[3]),
-                                              int(answer_text_words[2]),
-                                              int(answer_text_words[1]))
-                            send_message(chat_id,
-                                         'Курс {1} {2} на {0}: {3}'.format(
-                                             date_value.isoformat(),
-                                             *rate(answer_text_words[0][1:],
-                                                   date_value)
-                                         ))
-                    except (KeyError, ValueError):
-                        send_message(chat_id, 'Something wrong!!!')
-                    except Exception as e:
-                        print(type(e))
-                        send_message(chat_id, "Incorrect command")
+                            send_message(chat_id, get_habr(
+                                int(answer_text_words[1])
+                            ))
+                    else:
+                        send_message(chat_id, 'Что тебе нужно?')
                 else:
-                    send_message(chat_id, 'Что тебе нужно?')
+                    send_message(chat_id, 'Not understand')
             sleep(3)
     except KeyError:
         print("Invalid token")
