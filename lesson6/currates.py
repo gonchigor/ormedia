@@ -8,16 +8,22 @@ import datetime
 http://www.nbrb.by/APIHelp/ExRates
 '''
 
-def rate(currency, date=None):
-    if date is None:
-        rates = requests.get('http://www.nbrb.by/API/ExRates/Rates?Periodicity=0'
-                             ).json()
-    dict_rates = {rate['Cur_Abbreviation']:(
-        rate['Cur_Scale'], 
-        rate['Cur_Name'], 
-        rate['Cur_OfficialRate']
-        ) for rate in rates}
-    return dict_rates[currency.upper()]
+def rate(currency, date_value=None):
+    if date_value is None:
+        request_rate = requests.get('http://www.nbrb.by/API/ExRates/Rates?Periodicity=0')
+    else:
+        input_date = date_value.isoformat()
+        request_rate = requests.get(
+            f'http://www.nbrb.by/API/ExRates/Rates?Periodicity=0&onDate={input_date}')
+    if request_rate.status_code == 200:
+        rates = request_rate.json()
+        dict_rates = {rate['Cur_Abbreviation']: (
+            rate['Cur_Scale'],
+            rate['Cur_Name'],
+            rate['Cur_OfficialRate']
+            ) for rate in rates}
+        return dict_rates[currency.upper()]
+    return request_rate.status_code
 
 if __name__ == '__main__':
     print(rate('eur'))
