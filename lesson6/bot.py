@@ -12,21 +12,32 @@ URL = 'https://api.telegram.org/bot' + token + '/'
 
 def get_updates():
     url = URL + 'getupdates'
-    r = requests.get(url)
-    return r.json()
+    try:
+        r = requests.get(url)
+    except KeyError:
+        return "Invalid token"
+    except ConnectionError:
+        return "Couldn't connect to telegram"
+    if r.status_code == 200:
+        return r.json()
+    return r
 
 
 def get_message():
     data = get_updates()
+    global last_updates
     if len(data['result']):
-        chat_id = data['result'][-1]['message']['chat']['id']
-        global last_updates
-        cur_update = data['result'][-1]['update_id']
-        if last_updates != cur_update:
-            last_updates = cur_update
+        try:
+            cur_update = data['result'][-1]['update_id']
+            chat_id = data['result'][-1]['message']['chat']['id']
             message_text = data['result'][-1]['message']['text']
             message = {'chat_id': chat_id, 'text': message_text}
-            return message
+        except requests.exceptions.InvalidSchema:
+            message = "Invalid schema"
+        finally:
+            if last_updates != cur_update:
+                last_updates = cur_update
+                return message
     return None
 
 

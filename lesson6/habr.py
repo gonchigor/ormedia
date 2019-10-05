@@ -29,10 +29,13 @@ def main():
     print(get_habr(1))
     print(get_habr(20))
     print(get_habr(21))
-        
-        
+
+
 def get_habr(num=None):
-    page = get_html('https://habr.com/top/monthly/')
+    try:
+        page = get_html('https://habr.com/top/monthly/')
+    except ConnectionError:
+        return "Couldn't connect to habr"
     texts = get_all_data(page)
     if num is None:
         return texts

@@ -9,12 +9,15 @@ http://www.nbrb.by/APIHelp/ExRates
 '''
 
 def rate(currency, date_value=None):
-    if date_value is None:
-        request_rate = requests.get('http://www.nbrb.by/API/ExRates/Rates?Periodicity=0')
-    else:
-        input_date = date_value.isoformat()
-        request_rate = requests.get(
-            f'http://www.nbrb.by/API/ExRates/Rates?Periodicity=0&onDate={input_date}')
+    try:
+        if date_value is None:
+            request_rate = requests.get('http://www.nbrb.by/API/ExRates/Rates?Periodicity=0')
+        else:
+            input_date = date_value.isoformat()
+            request_rate = requests.get(
+                f'http://www.nbrb.by/API/ExRates/Rates?Periodicity=0&onDate={input_date}')
+    except ConnectionError:
+        return "Couldn't connect to NBRB"
     if request_rate.status_code == 200:
         rates = request_rate.json()
         dict_rates = {rate['Cur_Abbreviation']: (
