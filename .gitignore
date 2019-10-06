@@ -3,3 +3,5 @@
 __pycache__
 lesson6/token_auth.py
 .env
+/messages
+/logs
