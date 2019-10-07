@@ -8,6 +8,7 @@ class Bot:
     def __init__(self, token):
         self.token = token
         self.url = f'https://api.telegram.org/bot{self.token}/'
+        self.last_updates = 0
 
     def get_updates(self):
         method = 'getUpdates'
@@ -16,6 +17,9 @@ class Bot:
 
     def get_message(self):
         data = self.get_updates()
+        cur_update = data['result'][-1]['update_id']
+        if cur_update == self.last_updates:
+            return None
         last_message = data['result'][-1]['message']
         chat_id = last_message['chat']['id']
         text = last_message['text']
@@ -23,6 +27,7 @@ class Bot:
             'chat_id': chat_id,
             'text': text,
         }
+        self.last_updates = cur_update
         return message
 
     def send_message(self, chat_id, text):
