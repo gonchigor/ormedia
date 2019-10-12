@@ -6,7 +6,7 @@ import time
 
 rateBot = RateBot(token)
 cur_time = time.asctime()
-logging.basicConfig(filename='logs/log' + str(cur_time) + '.log',
+logging.basicConfig(filename='logs/log' + str(cur_time).replace(':', '') + '.log',
                         level=logging.INFO, filemode='w')
 
 while True:
@@ -41,6 +41,11 @@ while True:
                         rateBot.send_message(chat_id, rateBot.habr(
                             int(answer_text_words[1])
                         ))
+                elif answer_text_words[0] == 'log':
+                    num_messages = int(answer_text_words[1])
+                    mes = rateBot.get_user_message(chat_id, num_messages)
+                    if mes is not None:
+                        rateBot.send_message(chat_id, f'{num_messages} сообщений назад ты писал(а): {mes}')
         else:
             sleep(2)
     except Exception as e:

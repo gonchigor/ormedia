@@ -17,6 +17,7 @@ def rate(currency, date_value=None):
             request_rate = requests.get(
                 f'http://www.nbrb.by/API/ExRates/Rates?Periodicity=0&onDate={input_date}')
     except ConnectionError:
+
         return "Couldn't connect to NBRB"
     if request_rate.status_code == 200:
         rates = request_rate.json()
