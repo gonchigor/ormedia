@@ -21,17 +21,25 @@ while True:
             elif len(answer_text_words):
                 if answer_text_words[0].upper() in ('/USD', '/EUR', '/RUB'):
                     if len(answer_text_words) == 1:
-                        rateBot.send_message(chat_id, 'Курс {} {} на сегодня: {}'.format(
-                                        *rateBot.rate(answer_text_words[0][1:])))
+                        msg = rateBot.rate(answer_text_words[0][1:])
+                        if rateBot.last_status == 200:
+                            rateBot.send_message(chat_id, 'Курс {} {} на сегодня: {}'.format(
+                                            *msg))
+                        else:
+                            rateBot.send_message("Произошла ошибка {}".format(msg))
                     else:
                         day = int(answer_text_words[1])
                         month = int(answer_text_words[2])
                         year = int(answer_text_words[3])
                         dateiso = rateBot.date_to_iso(day, month, year)
-                        rateBot.send_message(chat_id,
+                        msg = rateBot.rate(answer_text_words[0][1:],
+                                              day, month, year)
+                        if rateBot.last_status == 200:
+                            rateBot.send_message(chat_id,
                                 'Курс {1} {2} на {0}: {3}'.format(dateiso,
-                                *rateBot.rate(answer_text_words[0][1:],
-                                              day, month, year)))
+                                *msg))
+                        else:
+                            rateBot.send_message("Произошла ошибка {}".format(msg))
                 elif answer_text_words[0].upper() == '/HABR':
                     if len(answer_text_words) == 1:
                             messages = rateBot.habr()
