@@ -5,3 +5,4 @@ lesson6/token_auth.py
 .env
 /messages
 /logs
+/sql

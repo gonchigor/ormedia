@@ -42,9 +42,9 @@ while True:
                             rateBot.send_message("Произошла ошибка {}".format(msg))
                 elif answer_text_words[0].upper() == '/HABR':
                     if len(answer_text_words) == 1:
-                            messages = rateBot.habr()
-                            for mes in messages:
-                                rateBot.send_message(chat_id, mes)
+                        messages = rateBot.habr()
+                        for mes in messages:
+                            rateBot.send_message(chat_id, mes)
                     else:
                         rateBot.send_message(chat_id, rateBot.habr(
                             int(answer_text_words[1])
